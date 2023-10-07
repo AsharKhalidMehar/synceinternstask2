@@ -50,29 +50,25 @@ let curentindex = 0;
 
 function startQuiz() {
     Score = 0;
-    next.innerHTML = "next";
-    // console.log('next',next)
+    next.innerHTML = "Submit";
+  
     showQuestion();
 }
 
 function showQuestion() {
-      
-
-    
-    for (let q of questions) {
-
-        let currentQuestion = q;
-        questionElement.innerHTML = currentQuestion.number + "." + currentQuestion.question;
-        console.log(' currentQuestion.answers', currentQuestion.answers)
-        currentQuestion.answers.forEach(answer => {
-            console.log('answer', answer)
-            const button = document.createElement("button");
-            button.innerHTML = answer.text;
-            button.classList.add("btn")
-
+    let currentQuestion = questions[curentindex];
+    questionElement.innerHTML = currentQuestion.number + "." + currentQuestion.question;
+    currentQuestion.answers.forEach(answer => {
+        const button = document.createElement("button");
+        button.innerHTML = answer.text;
+        button.classList.add("btn");
+        button.addEventListener("click", function() {
+            // Handle answer selection here (check if it's correct, update score, etc.)
         });
-    }
+        answerElement.appendChild(button);
+    });
 }
+
 
 
 
@@ -84,35 +80,44 @@ function resetState() {
 
 
 }
-// startQuiz();
+
 
 function getNextQuestion() {
-    let currentQuestion = curentindex;
+    let currentQuestion = questions[curentindex];
+    resetState(); // Clear previous answer buttons
 
-    questionElement.innerHTML = questions[currentQuestion].number + "." + questions[currentQuestion].question;
+    questionElement.innerHTML = currentQuestion.number + "." + currentQuestion.question;
 
-    questions[currentQuestion].answers.forEach(answer => {
-        // Select the div element where you want to append the button
+    currentQuestion.answers.forEach(answer => {
         const buttonContainer = document.getElementById("answerbtn");
-
-        // Create a new button element
         const newButton = document.createElement("button");
-
-        // Set the button's text and other attributes if needed
         newButton.innerText = answer.text;
-        newButton.id = "next";
-        // Add an event listener to the button
+        newButton.classList.add("btn");
+
         newButton.addEventListener("click", function() {
-            alert("Button clicked!");
+            // Check if the clicked answer is correct
+            if (answer.correct) {
+                // Update score if the answer is correct
+                Score++;
+            }
+            // Move to the next question
+            curentindex++;
+            // Check if there are more questions
+            if (curentindex < questions.length) {
+                // Display the next question
+                getNextQuestion();
+            } else {
+                // If no more questions, show the user's score
+                alert("Quiz completed! Your score: " + Score);
+            }
         });
 
-        // Append the button to the button container
         buttonContainer.appendChild(newButton);
-
     });
-    curentindex++
 }
 
+window.onload = startQuiz;
+// startQuiz();
 
 
 
